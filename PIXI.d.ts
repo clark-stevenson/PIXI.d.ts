@@ -232,7 +232,7 @@ declare module PIXI {
         fontSize: number;
         textWidth: number;
         textHeight: number;
-        tint: string;
+        tint: number;
         style: BitmapTextStyle;
 
         setText(text: string): void;
