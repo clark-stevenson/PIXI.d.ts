@@ -963,18 +963,18 @@ declare module PIXI {
 
     }
     
-    export class RenderTexture extends Texture{
+    export class RenderTexture extends Texture {
 
         constructor(width?: number, height?: number, renderer?: PixiRenderer, scaleMode?:scaleModes);
 
         frame: Rectangle;
-		baseTexture:BaseTexture;
+        baseTexture:BaseTexture;
         renderer: PixiRenderer;
 
         clear(): void;
         resize(width: number, height: number, updateBase: boolean): void;
 
-	}
+    }
 	
 }
 
