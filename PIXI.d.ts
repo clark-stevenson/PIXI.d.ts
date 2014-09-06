@@ -407,7 +407,7 @@ declare module PIXI {
         getChildAt(index: number): DisplayObject;
         removeChild(child: DisplayObject): DisplayObject;
         removeChildAt(index:number ): DisplayObject;
-        removeChildren(beginIndex: number, endIndex: number): DisplayObject[];
+        removeChildren(beginIndex?: number, endIndex?: number): DisplayObject[];
         removeStageReference(): void;
 
     }
