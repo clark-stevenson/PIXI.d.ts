@@ -973,6 +973,7 @@ declare module PIXI {
 
         clear(): void;
         resize(width: number, height: number, updateBase: boolean): void;
+        render(displayObject: DisplayObject, position?: Point, clear?: boolean): void;
 
     }
 	
