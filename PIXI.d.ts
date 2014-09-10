@@ -43,8 +43,8 @@ declare module PIXI {
     export var RAD_TO_DEG: number;
     export var DEG_TO_RAD: number;
 
-    export var BaseTextureCache: Map<string, BaseTexture>;
-    export var TextureCache: Map<string, Texture>;
+    export var BaseTextureCache: { [key: string]: BaseTexture }
+    export var TextureCache: { [key: string]: Texture }
 
     export function rgb2hex(rgb: number[]): string;
     export function hex2rgb(hex: string): number[];
