@@ -37,11 +37,15 @@ declare module PIXI {
 
     }
 
+    export var defaultRenderOptions: PixiRendererOptions;
+
     export var INTERACTION_REQUENCY: number;
     export var AUTO_PREVENT_DEFAULT: boolean;
 
     export var RAD_TO_DEG: number;
     export var DEG_TO_RAD: number;
+
+    export var RETINA_PREFIX: string;
 
     export var BaseTextureCache: { [key: string]: BaseTexture }
     export var TextureCache: { [key: string]: Texture }
@@ -49,8 +53,8 @@ declare module PIXI {
     export function rgb2hex(rgb: number[]): string;
     export function hex2rgb(hex: string): number[];
 
-    export function autoDetectRenderer(width?: number, height?: number, view?: HTMLCanvasElement, transparent?: boolean, antialias?: boolean): PixiRenderer;
-    export function autoDetectRecommendedRenderer(width?: number, height?: number, view?: HTMLCanvasElement, transparent?: boolean, antialias?: boolean): PixiRenderer;
+    export function autoDetectRenderer(width?: number, height?: number, options?: PixiRendererOptions): PixiRenderer;
+    export function autoDetectRecommendedRenderer(width?: number, height?: number, options?: PixiRendererOptions): PixiRenderer;
 
     export function canUseNewCanvasBlendModes(): boolean;
     export function getNextPowerOfTwo(number: number): number;
@@ -85,6 +89,17 @@ declare module PIXI {
 
         render(stage: Stage): void;
         resize(width: number, height: number): void;
+
+    }
+
+    export interface PixiRendererOptions {
+
+        antialias: boolean;
+        clearBeforeRender: boolean;
+        preserveDrawingBuffer: boolean;
+        resolution: number;
+        transparent: boolean;
+        view: HTMLCanvasElement;
 
     }
 
@@ -165,6 +180,12 @@ declare module PIXI {
 
     }
 
+    export class AsciiFilter extends AbstractFilter {
+
+        size: number;
+
+    }
+
     export class AssetLoader extends EventTarget {
 
         constructor(assetURLs: string[], crossorigin: boolean);
@@ -203,6 +224,7 @@ declare module PIXI {
         hasLoaded: boolean;
         id: number;
         premultipliedAlpha: boolean;
+        resolution: number;
         scaleMode: scaleModes;
         source: HTMLImageElement;
         width: number;
@@ -267,14 +289,14 @@ declare module PIXI {
 
     export class CanvasMaskManager {
 
-        pushMask(maskData: MaskData, context: CanvasRenderingContext2D): void;
-        popMask(context: CanvasRenderingContext2D): void;
+        pushMask(maskData: MaskData, renderSession: CanvasRenderingContext2D): void;
+        popMask(renderSession: CanvasRenderingContext2D): void;
 
     }
 
     export class CanvasRenderer implements PixiRenderer {
 
-        constructor(width?: number, height?: number, view?: HTMLCanvasElement, transparent?: boolean);
+        constructor(width?: number, height?: number, options?: PixiRendererOptions);
 
         clearBeforeRender: boolean;
         context: CanvasRenderingContext2D;
@@ -283,6 +305,7 @@ declare module PIXI {
         maskManager: CanvasMaskManager;
         refresh: boolean;
         renderSession: RenderSession;
+        resolution: number;
         transparent: boolean;
         type: number;
         view: HTMLCanvasElement;
@@ -384,7 +407,7 @@ declare module PIXI {
         click(e: InteractionData): void;
         getBounds(matrix?: Matrix): Rectangle;
         getLocalBounds(): Rectangle;
-        generateTexture(renderer: PixiRenderer): RenderTexture;
+        generateTexture(resolution: number, scaleMode: scaleModes, renderer: PixiRenderer): RenderTexture;
         mousedown(e: InteractionData): void;
         mouseout(e: InteractionData): void;
         mouseover(e: InteractionData): void;
@@ -456,7 +479,7 @@ declare module PIXI {
         frameBuffer: WebGLFramebuffer;
         gl: WebGLRenderingContext;
         program: WebGLProgram;
-        scaleMode: number;
+        scaleMode: scaleModes;
 
         clear(): void;
         resize(width: number, height: number): void;
@@ -487,6 +510,7 @@ declare module PIXI {
         drawRect(x: number, y: number, width: number, height: number): void;
         drawRoundedRect(x: number, y: number, width: number, height: number, radius: number): Graphics;
         endFill(): void;
+        generateTexture(resolution?: number, scaleMode?: number): Texture;
         lineStyle(lineWidth: number, color: number, alpha: number): void;
         lineTo(x: number, y: number): void;
         moveTo(x: number, y: number): void;
@@ -529,6 +553,7 @@ declare module PIXI {
         mouseOut: boolean;
         mouseoverEnabled: boolean;
         pool: InteractionData[];
+        resolution: number;
         stage: Stage;
         touchs: { [id: string]: InteractionData };
 
@@ -566,8 +591,12 @@ declare module PIXI {
         apply(pos: Point, newPos: Point): Point;
         applyInverse(pos: Point, newPos: Point): Point;
         determineMatrixArrayType(): number[];
+        rotate(angle: number): Matrix;
         fromArray(array: number[]): void;
+        translate(x: number, y: number): Matrix;
         toArray(transpose: boolean): number[];
+        scale(x: number, y: number): Matrix;
+
 
     }
 
@@ -593,6 +622,12 @@ declare module PIXI {
 
     }
 
+    export class NoiseFilter extends AbstractFilter {
+
+        noise: number;
+
+    }
+
     export class NormalMapFilter extends AbstractFilter {
 
         map: Texture;
@@ -608,6 +643,9 @@ declare module PIXI {
     }
 
     export class PixiShader {
+
+        constructor(gl: WebGLRenderingContext);
+
         defaultVertexSrc: string;
         fragmentSrc: string[];
         gl: WebGLRenderingContext;
@@ -615,12 +653,12 @@ declare module PIXI {
         textureCount: number;
         attributes: ShaderAttribute[];
 
-        constructor(gl: WebGLRenderingContext);
         destroy(): void;
         init(): void;
         initSampler2D(): void;
         initUniforms(): void;
         syncUniforms(): void;
+
     }
 
     export class Point {
@@ -772,6 +810,7 @@ declare module PIXI {
         constructor(text: string, style?: TextStyle);
 
         context: CanvasRenderingContext2D;
+        resolution: number;
 
         destroy(destroyTexture: boolean): void;
         setStyle(style: TextStyle): void;
@@ -817,6 +856,37 @@ declare module PIXI {
 
         generateTilingTexture(forcePowerOfTwo: boolean): void;
         setTexture(texture: Texture): void;
+
+    }
+
+    export class TiltShiftFilter extends AbstractFilter {
+
+        blur: number;
+        gradientBlur: number;
+        start: number;
+        end: number;
+
+    }
+
+    export class TiltShiftXFilter extends AbstractFilter {
+
+        blur: number;
+        gradientBlur: number;
+        start: number;
+        end: number;
+
+        updateDelta(): void;
+
+    }
+
+    export class TiltShiftYFilter extends AbstractFilter {
+
+        blur: number;
+        gradientBlur: number;
+        start: number;
+        end: number;
+
+        updateDelta(): void;
 
     }
 
@@ -904,13 +974,14 @@ declare module PIXI {
 
         static createWebGLTexture(texture: Texture, gl: WebGLRenderingContext): void;
 
-        constructor(width?: number, height?: number, view?: HTMLCanvasElement, transparent?: boolean, antialias?: boolean, preserveDrawingBuffer?: boolean);
+        constructor(width?: number, height?: number, options?: PixiRendererOptions);
 
         contextLost: boolean;
         contextRestoreLost: boolean;
         height: number;
         gl: WebGLRenderingContext;
-        preserveDrawingBuffer: Boolean;
+        preserveDrawingBuffer: boolean;
+        resolution: number;
         transparent: boolean;
         type: number;
         view: HTMLCanvasElement;
@@ -970,11 +1041,12 @@ declare module PIXI {
 
     export class RenderTexture extends Texture {
 
-        constructor(width?: number, height?: number, renderer?: PixiRenderer, scaleMode?: scaleModes);
+        constructor(width?: number, height?: number, renderer?: PixiRenderer, scaleMode?: scaleModes, resolution?: number);
 
         frame: Rectangle;
         baseTexture: BaseTexture;
         renderer: PixiRenderer;
+        resolution: number;
 
         clear(): void;
         resize(width: number, height: number, updateBase: boolean): void;
