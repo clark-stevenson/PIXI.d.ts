@@ -438,10 +438,12 @@ declare module PIXI {
         addChild(child: DisplayObject): void;
         addChildAt(child: DisplayObject, index: number): void;
         getChildAt(index: number): DisplayObject;
+        getChildIndex(child: DisplayObject): number;
         removeChild(child: DisplayObject): DisplayObject;
         removeChildAt(index: number): DisplayObject;
         removeChildren(beginIndex?: number, endIndex?: number): DisplayObject[];
         removeStageReference(): void;
+        setChildIndex(child: DisplayObject, index: number): void;
 
     }
 
@@ -510,7 +512,6 @@ declare module PIXI {
         drawRect(x: number, y: number, width: number, height: number): void;
         drawRoundedRect(x: number, y: number, width: number, height: number, radius: number): Graphics;
         endFill(): void;
-        generateTexture(resolution?: number, scaleMode?: number): Texture;
         lineStyle(lineWidth: number, color: number, alpha: number): void;
         lineTo(x: number, y: number): void;
         moveTo(x: number, y: number): void;
