@@ -25,7 +25,7 @@ declare module PIXI {
         HUE,
         SATURATION,
         COLOR,
-        LUMINOSITY,
+        LUMINOSITY
 
     }
 
@@ -836,7 +836,7 @@ declare module PIXI {
         noFrame: boolean;
         trim: Point;
         width: number;
-        scope: Object;
+        scope: any;
         valid: boolean;
 
         destroy(destroyBase: boolean): void;
