@@ -174,7 +174,7 @@ declare module PIXI {
         dirty: boolean;
         padding: number;
 
-        apply(frameBuffer: WebGLFramebuffer);
+        apply(frameBuffer: WebGLFramebuffer): void;
         syncUniforms(): void;
 
     }
