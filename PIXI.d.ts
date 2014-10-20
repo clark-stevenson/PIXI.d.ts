@@ -1,4 +1,4 @@
-// Type definitions for PIXI 2.0.0 dev 2014-10-17 to commit "getBounds Tweak"
+// Type definitions for PIXI 2.0.0 dev 2014-10-19
 // Project: https://github.com/GoodBoyDigital/pixi.js/
 
 declare module PIXI {
@@ -573,7 +573,6 @@ declare module PIXI {
 
     export class Graphics extends DisplayObjectContainer {
 
-        bounds: Rectangle;
         blendMode: number;
         boundsPadding: number;
         fillAlpha: number;
