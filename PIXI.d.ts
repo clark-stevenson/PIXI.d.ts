@@ -64,8 +64,8 @@ declare module PIXI {
 
     export function AjaxRequest(): XMLHttpRequest;
 
-    export function CompileFragmentShader(gl: WebGLRenderingContext, shaderSrc: any): any;
-    export function CompileProgram(gl: WebGLRenderingContext, vertexSrc: any[], fragmentSrc: any): any;
+    export function CompileFragmentShader(gl: WebGLRenderingContext, shaderSrc: string[]): any;
+    export function CompileProgram(gl: WebGLRenderingContext, vertexSrc: string[], fragmentSrc: string[]): any;
 
 
     export interface IEventCallback {
@@ -169,10 +169,12 @@ declare module PIXI {
 
     export class AbstractFilter {
 
-        constructor(fragmentSrc: any, uniforms: any);
+        constructor(fragmentSrc: string[], uniforms: any);
 
         dirty: boolean;
         padding: number;
+        uniforms: any;
+        fragmentSrc: string[];
 
         apply(frameBuffer: WebGLFramebuffer): void;
         syncUniforms(): void;
@@ -421,7 +423,7 @@ declare module PIXI {
 
         constructor(matrix: number[], width: number, height: number);
 
-        matrix: number[];
+        matrix: Matrix;
         width: number;
         height: number;
 
@@ -489,8 +491,8 @@ declare module PIXI {
         rightupoutside(e: InteractionData): void;
         setStageReference(stage: Stage): void;
         tap(e: InteractionData): void;
-        toGlobal(pos: Point): Point;
-        toLocal(pos: Point, from: DisplayObject): Point;
+        toGlobal(position: Point): Point;
+        toLocal(position: Point, from: DisplayObject): Point;
         touchend(e: InteractionData): void;
         touchendoutside(e: InteractionData): void;
         touchstart(e: InteractionData): void;
@@ -563,12 +565,26 @@ declare module PIXI {
         frameBuffer: WebGLFramebuffer;
         gl: WebGLRenderingContext;
         program: WebGLProgram;
-        scaleMode: scaleModes;
-        texture: any;
+        scaleMode: number;
+        texture: WebGLTexture;
 
         clear(): void;
         resize(width: number, height: number): void;
         destroy(): void;
+
+    }
+
+    export class GraphicsData {
+
+        constructor(lineWidth?: number, lineColor?: number, lineAlpha?: number, fillColor?: number, fillAlpha?: number, fill?: boolean, shape?: any);
+
+        lineWidth: number;
+        lineColor: number;
+        lineAlpha: number;
+        fillColor: number;
+        fillAlpha: number;
+        fill: boolean;
+        shape: any;
 
     }
 
@@ -581,28 +597,27 @@ declare module PIXI {
         lineWidth: number;
         lineColor: string;
         tint: number;
+        worldAlpha: number;
 
         arc(cx: number, cy: number, radius: number, startAngle: number, endAngle: number, anticlockwise: boolean): Graphics;
         arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): Graphics;
-        beginFill(color: number, alpha?: number): void;
+        beginFill(color: number, alpha?: number): Graphics;
         bezierCurveTo(cpX: number, cpY: number, cpX2: number, cpY2: number, toX: number, toY: number): Graphics;
-        clear(): void;
+        clear(): Graphics;
         destroyCachedSprite(): void;
-        drawCircle(x: number, y: number, radius: number): void;
-        drawEllipse(x: number, y: number, width: number, height: number): void;
-        drawPolygon(path: any): void;
-        drawRect(x: number, y: number, width: number, height: number): void;
+        drawCircle(x: number, y: number, radius: number): Graphics;
+        drawEllipse(x: number, y: number, width: number, height: number): Graphics;
+        drawPolygon(path: any): Graphics;
+        drawRect(x: number, y: number, width: number, height: number): Graphics;
         drawRoundedRect(x: number, y: number, width: number, height: number, radius: number): Graphics;
-        drawShape(shape: Circle): any; //GraphicsData?
-        drawShape(shape: Rectangle): any; //GraphicsData?
-        drawShape(shape: Ellipse): any; //GraphicsData?
-        drawShape(shape: Polygon): any; //GraphicsData?
-        worldAlpha: number;
-
-        endFill(): void;
-        lineStyle(lineWidth: number, color: number, alpha: number): void;
-        lineTo(x: number, y: number): void;
-        moveTo(x: number, y: number): void;
+        drawShape(shape: Circle): GraphicsData;
+        drawShape(shape: Rectangle): GraphicsData;
+        drawShape(shape: Ellipse): GraphicsData;
+        drawShape(shape: Polygon): GraphicsData;
+        endFill(): Graphics;
+        lineStyle(lineWidth: number, color: number, alpha: number): Graphics;
+        lineTo(x: number, y: number): Graphics;
+        moveTo(x: number, y: number): Graphics;
         quadraticCurveTo(cpX: number, cpY: number, toX: number, toY: number): Graphics;
         updateBounds(): void;
 
@@ -771,24 +786,92 @@ declare module PIXI {
 
     }
 
-    export class PixiShader {
+    export class IPixiShader {
 
-        constructor(gl: WebGLRenderingContext);
-
-        defaultVertexSrc: string;
-        dirty: boolean;
         fragmentSrc: string[];
-        firstRun: boolean;
         gl: WebGLRenderingContext;
         program: WebGLProgram;
-        textureCount: number;
-        attributes: ShaderAttribute[];
+        vertexSrc: string[];
 
         destroy(): void;
         init(): void;
+
+    }
+
+    export class PixiShader implements IPixiShader {
+
+        constructor(gl: WebGLRenderingContext);
+
+        attributes: ShaderAttribute[];
+        defaultVertexSrc: string[];
+        dirty: boolean;
+        firstRun: boolean;
+        textureCount: number;
+        fragmentSrc: string[];
+        gl: WebGLRenderingContext;
+        program: WebGLProgram;
+        vertexSrc: string[];
+
         initSampler2D(): void;
         initUniforms(): void;
         syncUniforms(): void;
+
+        destroy(): void;
+        init(): void;
+
+    }
+
+    export class PixiFastShader implements IPixiShader {
+
+        constructor(gl: WebGLRenderingContext);
+
+        textureCount: number;
+        fragmentSrc: string[];
+        gl: WebGLRenderingContext;
+        program: WebGLProgram;
+        vertexSrc: string[];
+
+        destroy(): void;
+        init(): void;
+
+    }
+
+    export class PrimitiveShader implements IPixiShader {
+
+        constructor(gl: WebGLRenderingContext);
+        fragmentSrc: string[];
+        gl: WebGLRenderingContext;
+        program: WebGLProgram;
+        vertexSrc: string[];
+
+        destroy(): void;
+        init(): void;
+
+    }
+
+    export class ComplexPrimitiveShader implements IPixiShader {
+
+        constructor(gl: WebGLRenderingContext);
+        fragmentSrc: string[];
+        gl: WebGLRenderingContext;
+        program: WebGLProgram;
+        vertexSrc: string[];
+
+        destroy(): void;
+        init(): void;
+
+    }
+
+    export class StripShader implements IPixiShader {
+
+        constructor(gl: WebGLRenderingContext);
+        fragmentSrc: string[];
+        gl: WebGLRenderingContext;
+        program: WebGLProgram;
+        vertexSrc: string[];
+
+        destroy(): void;
+        init(): void;
 
     }
 
@@ -901,7 +984,7 @@ declare module PIXI {
 
         anchor: Point;
         blendMode: blendModes;
-        shader: AbstractFilter;
+        shader: IPixiShader;
         texture: Texture;
         tint: number;
 
@@ -1087,16 +1170,16 @@ declare module PIXI {
         constructor(gl: CanvasRenderingContext2D);
 
         currentBatchSize: number;
-        currentBaseTexture: any;
+        currentBaseTexture: BaseTexture;
         currentBlendMode: number;
         renderSession: RenderSession;
         drawing: boolean;
         indexBuffer: any;
         indices: number[];
         lastIndexCount: number;
-        matrix: any;
+        matrix: Matrix;
         maxSize: number;
-        shader: any;
+        shader: IPixiShader;
         size: number;
         vertexBuffer: any;
         vertices: number[];
@@ -1132,6 +1215,9 @@ declare module PIXI {
     }
 
     export class WebGLGraphics {
+
+        reset(): void;
+        upload(): void;
 
     }
 
@@ -1188,11 +1274,12 @@ declare module PIXI {
         maxAttibs: number;
         attribState: any[];
         stack: any[];
+        tempAttribState: any[];
 
         destroy(): void;
         setAttribs(attribs: ShaderAttribute[]): void;
         setContext(gl: WebGLRenderingContext): void;
-        setShader(shader: WebGLShader): boolean;
+        setShader(shader: IPixiShader): boolean;
 
     }
 
@@ -1221,7 +1308,7 @@ declare module PIXI {
         indices: number[];
         lastIndexCount: number;
         textures: Texture[];
-        shaders: AbstractFilter[]; //todo WebGLShader[] or PixiShader[]?
+        shaders: IPixiShader[];
         size: number;
         sprites: any[]; //todo Sprite[]?
         vertices: number[];
@@ -1230,7 +1317,7 @@ declare module PIXI {
         begin(renderSession: RenderSession): void;
         destroy(): void;
         end(): void;
-        flush(shader?: PixiShader): void;
+        flush(shader?: IPixiShader): void;
         render(sprite: Sprite): void;
         renderBatch(texture: Texture, size: number, startIndex: number): void;
         renderTilingSprite(sprite: TilingSprite): void;
