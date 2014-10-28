@@ -1,4 +1,4 @@
-// Type definitions for PIXI 2.0.0 dev 2014-10-19
+// Type definitions for PIXI 2.0.0 dev 2014-10-26
 // Project: https://github.com/GoodBoyDigital/pixi.js/
 
 declare module PIXI {
@@ -267,7 +267,7 @@ declare module PIXI {
         destroy(): void;
         dirty(): void;
         updateSourceImage(newSrc: string): void;
-
+        unloadFromGPU(): void;
 
     }
 
@@ -370,6 +370,7 @@ declare module PIXI {
         view: HTMLCanvasElement;
         width: number;
 
+        destroy(removeView?: boolean): void;
         render(stage: Stage): void;
         resize(width: number, height: number): void;
 
@@ -596,6 +597,7 @@ declare module PIXI {
         drawShape(shape: Rectangle): any; //GraphicsData?
         drawShape(shape: Ellipse): any; //GraphicsData?
         drawShape(shape: Polygon): any; //GraphicsData?
+        worldAlpha: number;
 
         endFill(): void;
         lineStyle(lineWidth: number, color: number, alpha: number): void;
@@ -832,7 +834,9 @@ declare module PIXI {
 
     export class RGBSplitFilter extends AbstractFilter {
 
-        angle: number;
+        red: Point;
+        green: Point;
+        blue: Point;
 
     }
 
@@ -1080,7 +1084,7 @@ declare module PIXI {
 
     export class WebGLFastSpriteBatch {
 
-        constructor();
+        constructor(gl: CanvasRenderingContext2D);
 
         currentBatchSize: number;
         currentBaseTexture: any;
@@ -1100,6 +1104,7 @@ declare module PIXI {
 
         end(): void;
         begin(spriteBatch: SpriteBatch, renderSession: RenderSession): void;
+        destroy(removeView?: boolean): void;
         flush(): void;
         render(spriteBatch: SpriteBatch): void;
         renderSprite(sprite: Sprite): void;
@@ -1249,6 +1254,7 @@ declare module PIXI {
         clear(): void;
         getBase64(): string;
         getCanvas(): HTMLCanvasElement;
+        getImage(): HTMLImageElement;
         resize(width: number, height: number, updateBase: boolean): void;
         render(displayObject: DisplayObject, position?: Point, clear?: boolean): void;
 
