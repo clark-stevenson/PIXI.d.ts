@@ -100,12 +100,12 @@ declare module PIXI {
 
     export interface PixiRendererOptions {
 
-        antialias: boolean;
-        clearBeforeRender: boolean;
-        preserveDrawingBuffer: boolean;
-        resolution: number;
-        transparent: boolean;
-        view: HTMLCanvasElement;
+        antialias?: boolean;
+        clearBeforeRender?: boolean;
+        preserveDrawingBuffer?: boolean;
+        resolution?: number;
+        transparent?: boolean;
+        view?: HTMLCanvasElement;
 
     }
 
@@ -496,6 +496,7 @@ declare module PIXI {
         touchend(e: InteractionData): void;
         touchendoutside(e: InteractionData): void;
         touchstart(e: InteractionData): void;
+        touchmove(e: InteractionData): void;
 
     }
 
@@ -1349,7 +1350,7 @@ declare module PIXI {
 
 }
 
-declare function requestAnimFrame(): void;
+declare function requestAnimFrame(callback:Function): void;
 
 declare module PIXI.PolyK {
     export function Triangulate(p: number[]): number[];
