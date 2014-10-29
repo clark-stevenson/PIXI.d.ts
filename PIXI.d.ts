@@ -548,6 +548,7 @@ declare module PIXI {
         timeStamp: number;
 
         stopPropagation(): void;
+        preventDefault(): void;
         stopImmediatePropagation(): void;
 
     }
