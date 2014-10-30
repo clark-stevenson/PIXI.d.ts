@@ -896,7 +896,7 @@ declare module PIXI {
         constructor(...points: Point[]);
         constructor(...points: number[]);
 
-        points: Point[];
+        points: number[];
 
         clone(): Polygon;
         contains(x: number, y: number): boolean;
