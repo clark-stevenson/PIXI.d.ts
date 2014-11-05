@@ -1,4 +1,4 @@
-// Type definitions for PIXI 2.0.0 dev reviewed: 2014-10-31
+// Type definitions for PIXI 2.0.0 dev 2014-11-05
 // Project: https://github.com/GoodBoyDigital/pixi.js/
 
 declare module PIXI {
@@ -1154,6 +1154,19 @@ declare module PIXI {
         angle: number;
         offset: Point;
         radius: number;
+
+    }
+    
+    export class VideoTexture extends BaseTexture {
+
+        static baseTextureFromVideo(video: HTMLVideoElement, scaleMode: number): BaseTexture;
+        static textureFromVideo(video: HTMLVideoElement, scaleMode: number): Texture;
+        static fromUrl(videoSrc: string, scaleMode: number): Texture;
+
+        autoUpdate: boolean;
+
+        destroy(): void;
+        updateBound(): void;
 
     }
 
