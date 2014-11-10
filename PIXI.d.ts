@@ -484,6 +484,7 @@ declare module PIXI {
         mouseout(e: InteractionData): void;
         mouseover(e: InteractionData): void;
         mouseup(e: InteractionData): void;
+        mousemove(e: InteractionData): void;
         mouseupoutside(e: InteractionData): void;
         rightclick(e: InteractionData): void;
         rightdown(e: InteractionData): void;
@@ -973,9 +974,35 @@ declare module PIXI {
 
         constructor(url: string);
 
+        state:AnimationState;
         createSprite(slot: any, descriptior: any): void;
-
     }
+
+
+    export class AnimationState
+    {
+        constructor(stateData);
+
+        animationSpeed: number;
+        current: any;
+        previous: any;
+        currentTime: number;
+        previousTime: number;
+        currentLoop: boolean;
+        previousLoop: boolean;
+        mixTime: number;
+        mixDuration: number;
+        update(delta);
+        apply(skeleton);
+        clearAnimation();
+
+        setAnimationByName(animationName, loop);
+        setAnimation(animation, loop);
+        addAnimationByName(animationName, loop, delay);
+        addAnimation(animation, loop, delay);
+        isComplete();
+    }
+
 
     export class Sprite extends DisplayObjectContainer {
 
