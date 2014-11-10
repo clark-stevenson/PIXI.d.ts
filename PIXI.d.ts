@@ -974,14 +974,13 @@ declare module PIXI {
 
         constructor(url: string);
 
-        state:AnimationState;
+        state: AnimationState;
         createSprite(slot: any, descriptior: any): void;
+
     }
 
-
-    export class AnimationState
-    {
-        constructor(stateData);
+    export class AnimationState {
+        constructor(stateData: any);
 
         animationSpeed: number;
         current: any;
@@ -992,17 +991,17 @@ declare module PIXI {
         previousLoop: boolean;
         mixTime: number;
         mixDuration: number;
-        update(delta);
-        apply(skeleton);
-        clearAnimation();
 
-        setAnimationByName(animationName, loop);
-        setAnimation(animation, loop);
-        addAnimationByName(animationName, loop, delay);
-        addAnimation(animation, loop, delay);
-        isComplete();
+        update(delta: number): void;
+        apply(skeleton: any): void;
+        clearAnimation(): void;
+        setAnimation(animation: any, loop: boolean): void;
+        setAnimationByName(animationName: string, loop: boolean): void;
+        addAnimationByName(animationName: string, loop: boolean, delay: number): void;
+        addAnimation(animation: any, loop: boolean, delay: number): void;
+        isComplete(): number;
+
     }
-
 
     export class Sprite extends DisplayObjectContainer {
 
@@ -1183,7 +1182,7 @@ declare module PIXI {
         radius: number;
 
     }
-    
+
     export class VideoTexture extends BaseTexture {
 
         static baseTextureFromVideo(video: HTMLVideoElement, scaleMode: number): BaseTexture;
@@ -1391,7 +1390,7 @@ declare module PIXI {
 
 }
 
-declare function requestAnimFrame(callback:Function): void;
+declare function requestAnimFrame(callback: Function): void;
 
 declare module PIXI.PolyK {
     export function Triangulate(p: number[]): number[];
