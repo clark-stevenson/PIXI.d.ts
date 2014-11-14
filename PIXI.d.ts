@@ -88,6 +88,7 @@ declare module PIXI {
 
     export interface PixiRenderer {
 
+        autoResize: boolean;
         height: number;
         transparent: boolean;
         type: number;
