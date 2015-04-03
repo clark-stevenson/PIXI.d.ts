@@ -1,7 +1,0 @@
-The pixi.d.ts and phaser.d.ts file has been successfuly split, you can find the most updated file here. (Note, pixi.d.ts is stand alone). 
-
-https://github.com/photonstorm/phaser/tree/dev/typescript
-
-Any future pull request for pixi.d.ts should be done against the dev branch. 
-
-Clark.
