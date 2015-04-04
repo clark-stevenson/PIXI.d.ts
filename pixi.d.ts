@@ -67,6 +67,20 @@ declare class PIXI {
 
 declare module PIXI {
 
+    //https://github.com/primus/eventemitter3
+    export interface EventEmitter {
+
+        listeners(event: string): any[];
+        emit(event: string): boolean;
+        on(event: string, fn: Function, context?: any): EventEmitter;
+        once(event: string, fn: Function, context?: any): EventEmitter;
+        removeListener(event: string, fn: Function, context?: any): EventEmitter;
+        removeAllListeners(event: string): EventEmitter;
+        off(event: string, fn: Function, context?: any): EventEmitter;
+        addListener(event: string, fn: Function, context?: any): EventEmitter;
+
+    }
+
     export interface RendererOptions {
 
         view?: HTMLCanvasElement;
@@ -79,7 +93,7 @@ declare module PIXI {
 
     }
 
-    export class DisplayObject implements EventEmitter {
+    export interface IDisplayObject extends EventEmitter, InteractionManager {
 
         position: Point;
         scale: Point;
@@ -111,7 +125,92 @@ declare module PIXI {
 
     }
 
-    export class Container extends DisplayObject {
+    export class DisplayObject implements IDisplayObject {
+
+        position: Point;
+        scale: Point;
+        pivot: Point;
+        rotation: number;
+        alpha: number;
+        visible: boolean;
+        parent: Container;
+        worldAlpha: number;
+        worldTransform: Matrix;
+
+        x: number;
+        y: number;
+        worldVisible: boolean;
+        mask: Graphics;
+        filters: AbstractFilter[];
+        name: string;
+
+        cacheAsBitmap: boolean;
+
+        getBounds(matrix?: Matrix): Rectangle;
+        getLocalBounds(): Rectangle;
+        toGlobal(position: Point): Point;
+        toLocal(position: Point, from?: DisplayObject): Point;
+        generateTexture(renderer: CanvasRenderer | WebGLRenderer, resolution: number, scaleModel: number): Texture;
+        destroy(): void;
+        getChildByName(name: string): DisplayObject;
+        getGlobalPosition(point: Point): Point;
+
+        listeners(event: string): any[];
+        emit(event: string): boolean;
+        on(event: string, fn: Function, context?: any): EventEmitter;
+        once(event: string, fn: Function, context?: any): EventEmitter;
+        removeListener(event: string, fn: Function, context?: any): EventEmitter;
+        removeAllListeners(event: string): EventEmitter;
+        off(event: string, fn: Function, context?: any): EventEmitter;
+        addListener(event: string, fn: Function, context?: any): EventEmitter;
+
+        renderer: SystemRenderer;
+        autoPreventDefault: boolean;
+        interactionFrequency: number;
+        mouse: InteractionData;
+        eventData: {
+            stopped: boolean;
+            target: any;
+            type: any;
+            data: InteractionData;
+        };
+        interactiveDataPool: InteractionData[];
+        onMouseUp: () => void;
+        processMouseUp: () => void;
+        onMouseDown: () => void;
+        ProcessMouseDown: () => void;
+        onMouseMove: () => void;
+        processMouseMove: () => void;
+        onMouseOut: () => void;
+        processMouseOverOut: () => void;
+        onTouchStart: () => void;
+        processTouchStart: () => void;
+        onTouchEnd: () => void;
+        processTouchEnd: () => void;
+        onTouchMove: () => void;
+        processTouchMove: () => void;
+        last: number;
+        currentCursorString: string;
+        resolution: number;
+
+        interactive: boolean;
+        buttonMode: boolean;
+        interactiveChildren: boolean;
+        defaultCursor: string;
+
+        mapPositionToPoint(point: Point, x: number, y: number): void;
+        processInteractive(point: Point, displayObject: Container | Sprite | TilingSprite | DisplayObject, func: Function, hitTest: boolean, interactive: boolean): boolean;
+
+    }
+
+    export interface IContainer extends IDisplayObject {
+
+        destroy(destroyChildren?: boolean): void;
+        getBounds(): Rectangle;
+
+    }
+
+    export class Container extends DisplayObject implements IContainer {
 
         children: DisplayObject[];
 
@@ -127,9 +226,6 @@ declare module PIXI {
         removeChild(child: DisplayObject): DisplayObject;
         removeChildAt(index: number): DisplayObject;
         removeChildren(beginIndex: number, endIndex?: number): DisplayObject[];
-        generateTexture(renderer: CanvasRenderer | WebGLRenderer, resolution: number, scaleMode: number): Texture;
-        getBounds(): Rectangle;
-        getLocalBounds(): Rectangle;
         destroy(destroyChildren?: boolean): void;
 
     }
@@ -638,7 +734,7 @@ declare module PIXI {
         static fromFrame(frameId: string): Sprite;
         static fromImage(imageId: string, crossorigin?: boolean, scaleMode?: number): Sprite;
 
-        constructor(texture: Texture);
+        constructor(texture?: Texture);
 
         anchor: Point;
         tint: number;
@@ -890,6 +986,15 @@ declare module PIXI {
 
         start(): void;
         stop(): void;
+
+        listeners(event: string): any[];
+        emit(event: string): boolean;
+        on(event: string, fn: Function, context?: any): EventEmitter;
+        once(event: string, fn: Function, context?: any): EventEmitter;
+        removeListener(event: string, fn: Function, context?: any): EventEmitter;
+        removeAllListeners(event: string): EventEmitter;
+        off(event: string, fn: Function, context?: any): EventEmitter;
+        addListener(event: string, fn: Function, context?: any): EventEmitter;
 
     }
 
@@ -1158,8 +1263,6 @@ declare module PIXI {
 
     export interface InteractionManager {
 
-        constructor(renderer: CanvasRenderer | WebGLRenderer, options?: { autoPreventDefault?: boolean; interactionFrequency?: boolean; });
-
         renderer: SystemRenderer;
         autoPreventDefault: boolean;
         interactionFrequency: number;
@@ -1228,6 +1331,15 @@ declare module PIXI {
         reset(): Loader;
         load(cb?: () => void): Loader;
 
+        listeners(event: string): any[];
+        emit(event: string): boolean;
+        on(event: string, fn: Function, context?: any): EventEmitter;
+        once(event: string, fn: Function, context?: any): EventEmitter;
+        removeListener(event: string, fn: Function, context?: any): EventEmitter;
+        removeAllListeners(event: string): EventEmitter;
+        off(event: string, fn: Function, context?: any): EventEmitter;
+        addListener(event: string, fn: Function, context?: any): EventEmitter;
+
     }
 
     export class Resource implements EventEmitter {
@@ -1270,12 +1382,21 @@ declare module PIXI {
         complete(): void;
         load(cb?: () => void): void;
 
+        listeners(event: string): any[];
+        emit(event: string): boolean;
+        on(event: string, fn: Function, context?: any): EventEmitter;
+        once(event: string, fn: Function, context?: any): EventEmitter;
+        removeListener(event: string, fn: Function, context?: any): EventEmitter;
+        removeAllListeners(event: string): EventEmitter;
+        off(event: string, fn: Function, context?: any): EventEmitter;
+        addListener(event: string, fn: Function, context?: any): EventEmitter;
+
     }
 
     //////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////MESH//////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////
-
+    
     export class Mesh extends Container {
 
         static DRAW_MODES: {
@@ -1320,10 +1441,5 @@ declare module PIXI {
 
     }
 
-    export interface EventEmitter {
-
-        //addListener(event: string, fn: (EventTarget) => void, context
-
-    }
-
+    
 }
